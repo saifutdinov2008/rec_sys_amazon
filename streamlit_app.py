@@ -12,8 +12,13 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 
+nltk.download('stopwords')
+
+
 # Load dataset
 df = pd.read_csv("amz_total_data_limited.csv")
+
+
 
 # Clean and prepare title list for dropdown
 product_title_list = df['title'].fillna("").tolist()
