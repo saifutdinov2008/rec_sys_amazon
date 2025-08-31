@@ -1,4 +1,5 @@
 streamlit
+kagglehub
 pandas
 numpy
 gensim
