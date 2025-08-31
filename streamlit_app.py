@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 
 # Load dataset
-df = pd.read_csv("amz_ca_total_products_data_processed.csv")
+df = pd.read_csv("amz_total_data_limited.csv")
 
 # Clean and prepare title list for dropdown
 product_title_list = df['title'].fillna("").tolist()
