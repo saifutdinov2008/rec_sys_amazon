@@ -115,7 +115,7 @@ def recommend(product_index: int = -1, top_n: int = 20, fromvalue: float = None,
 # Main logic
 if selected_product_title != "None":
     product_index = title_to_index[selected_product_title]
-    recommendations = recommend(product_index=product_index, fromvalue=price_range[0], tovalue=price_range[1])
+    recommendations = recommend(product_index=product_index)
     st.subheader(f"🔁 Products similar to: **{selected_product_title}**")
 elif selected_categories:
     recommendations = recommend(product_index=-1, category_list=selected_categories,
