@@ -1,6 +1,16 @@
 import streamlit as st
-import pandas as pd
+import re
+import nltk
 import numpy as np
+import pandas as pd
+import matplotlib as plt
+from tqdm import tqdm_notebook
+from ast import literal_eval
+from pymystem3 import Mystem
+from string import punctuation
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 
 # Load dataset
 df = pd.read_csv("amz_total_data_limited.csv")
@@ -35,6 +45,51 @@ selected_categories = st.sidebar.multiselect("📁 Or Select Categories", option
 price_min, price_max = float(df["price"].min()), float(df["price"].max())
 price_range = st.sidebar.slider("💲 Price Range", min_value=0.0, max_value=float(price_max),
                                 value=(10.0, 70.0), step=1.0)
+
+
+# init lemmatizer to avoid slow performance
+mystem = Mystem() 
+
+def word_tokenize_clean(doc: str, stop_words: list):
+    '''
+    tokenize from string to list of words
+    '''
+
+    # split into lower case word tokens \w lemmatization
+    tokens = list(set(mystem.lemmatize(doc.lower())))
+  
+    # remove tokens that are not alphabetic (including punctuation) and not a stop word
+    tokens = [word for word in tokens if word.isalpha() and not word in stop_words \
+              not in list(punctuation)]
+    return tokens
+
+tags_corpus = df['title'].values
+tags_corpus = [re.sub('[!/()0-9]', '', str(x)) for x in tags_corpus]
+stop_words = stopwords.words('english')
+
+gs_doc = [TaggedDocument(words = word_tokenize_clean(D, stop_words), tags = [str(i)]) for i, D in enumerate(tags_corpus)]
+
+VEC_SIZE = 50 # длина вектора для каждого фильма
+ALPHA = .02 # параметр обучения модели
+MIN_ALPHA = .00025 # параметр обучения модели
+MIN_COUNT = 4 # минимальное количество вхождений слова в словарь
+EPOCHS = 20 # количество тренировок
+
+# инициализировать модель
+model = Doc2Vec(vector_size = VEC_SIZE,
+                alpha = ALPHA, 
+                min_alpha = MIN_ALPHA,
+                min_count = MIN_COUNT,
+                dm = 0)
+
+# создайте словарь из всех документов по тегам
+model.build_vocab(tags_doc)
+
+# обучить модель
+model.train(tags_doc,
+            total_examples = model.corpus_count,
+            epochs = EPOCHS)
+
 
 def recommend(product_index: int = -1, top_n: int = 20, fromvalue: float = None, tovalue: float = None, category_list: list = None):
     if product_index != -1:   
