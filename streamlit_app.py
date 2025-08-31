@@ -1,6 +1,11 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import kagglehub
+
+
+# Download latest version
+path = kagglehub.dataset_download("asaniczka/amazon-canada-products-2023-2-1m-products")
 
 # Load dataset
 df = pd.read_csv("amz_ca_total_products_data_processed.csv")
