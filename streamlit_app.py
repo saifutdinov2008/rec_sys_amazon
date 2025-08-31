@@ -67,7 +67,7 @@ tags_corpus = df['title'].values
 tags_corpus = [re.sub('[!/()0-9]', '', str(x)) for x in tags_corpus]
 stop_words = stopwords.words('english')
 
-gs_doc = [TaggedDocument(words = word_tokenize_clean(D, stop_words), tags = [str(i)]) for i, D in enumerate(tags_corpus)]
+tags_doc = [TaggedDocument(words = word_tokenize_clean(D, stop_words), tags = [str(i)]) for i, D in enumerate(tags_corpus)]
 
 VEC_SIZE = 50 # длина вектора для каждого фильма
 ALPHA = .02 # параметр обучения модели
